@@ -47,12 +47,12 @@ export default async function Home() {
     <div suppressHydrationWarning >
       <HeroSection />
       <AboutSection />
-      <Experience />
-      {/* <Skills />
+      {/* <Experience /> */}
+      <Skills />
       <Projects />
       <Education />
       <Service blogs={services} />
-      <ContactSection /> */}
+      <ContactSection />
     </div>
   )
 };
