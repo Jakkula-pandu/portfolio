@@ -49,10 +49,10 @@ export default async function Home() {
       <AboutSection />
       <Experience />
       <Skills />
-      <Projects /> */}
-      <Education />
-      {/* <Service blogs={services} />
-      <ContactSection /> */}
+      <Projects />
+      <Education /> */}
+      <Service blogs={services} />
+      <ContactSection />
     </div>
   )
 };
