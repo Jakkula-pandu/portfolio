@@ -44,20 +44,16 @@ export default async function Home() {
 
 
   return (
-    // <div suppressHydrationWarning >
-    //   <HeroSection />
-    //   <AboutSection />
-    //   <Experience />
-    //   <Skills />
-    //   <Projects />
-    //   <Education />
-    //   <Service blogs={services} />
-    //   <ContactSection />
+    <div suppressHydrationWarning >
+      <HeroSection />
+      {/* <AboutSection />
+      <Experience />
+      <Skills />
+      <Projects />
+      <Education />
+      <Service blogs={services} />
+      <ContactSection /> */}
      
-    // </div>
-    <div>
-      Hello World
-      
     </div>
   )
 };
