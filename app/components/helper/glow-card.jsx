@@ -80,19 +80,18 @@
 
 // export default GlowCard;
 
-
 "use client";
 
 import { useEffect } from "react";
 
 const GlowCard = ({ children, identifier }) => {
   useEffect(() => {
-    if (typeof document === "undefined") return; // Prevents SSR errors
+    if (typeof window === "undefined") return; // Ensures the effect only runs in the browser
 
     const CONTAINER = document.querySelector(`.glow-container-${identifier}`);
     const CARDS = document.querySelectorAll(`.glow-card-${identifier}`);
 
-    if (!CONTAINER || CARDS.length === 0) return; // Ensures elements exist
+    if (!CONTAINER || CARDS.length === 0) return;
 
     const CONFIG = {
       proximity: 40,
@@ -106,7 +105,7 @@ const GlowCard = ({ children, identifier }) => {
     const UPDATE = (event) => {
       CARDS.forEach((CARD) => {
         if (!CARD) return;
-        
+
         const CARD_BOUNDS = CARD.getBoundingClientRect();
 
         if (
