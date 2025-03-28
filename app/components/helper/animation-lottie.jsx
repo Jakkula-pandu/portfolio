@@ -1,20 +1,11 @@
-"use client"
+"use client"; // Ensures this component runs only on the client side
 
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 
-const AnimationLottie = ({ animationPath, width }) => {
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationPath,
-    style: {
-      width: '95%',
-    }
-  };
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false }); // Prevents SSR issues
 
-  return (
-    <Lottie {...defaultOptions} />
-  );
+const AnimationLottie = ({ animationPath, width = "95%" }) => {
+  return <Lottie animationData={animationPath} loop autoplay style={{ width }} />;
 };
 
 export default AnimationLottie;
