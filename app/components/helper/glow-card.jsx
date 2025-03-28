@@ -1,10 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const GlowCard = ({ children, identifier }) => {
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
-    if (typeof window === "undefined" || !identifier) return; 
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient || typeof window === "undefined") return; // Ensures execution only on client
 
     const CONTAINER = document.querySelector(`.glow-container-${identifier}`);
     const CARDS = document.querySelectorAll(`.glow-card-${identifier}`);
@@ -21,7 +27,7 @@ const GlowCard = ({ children, identifier }) => {
     };
 
     const UPDATE = (event) => {
-      if (!event || event.x === undefined || event.y === undefined) return;
+      if (!event?.x || !event?.y) return; // Prevents undefined event error
 
       CARDS.forEach((CARD) => {
         if (!CARD) return;
@@ -55,8 +61,9 @@ const GlowCard = ({ children, identifier }) => {
       });
     };
 
+    document.body.addEventListener("pointermove", UPDATE);
+
     const RESTYLE = () => {
-      if (!CONTAINER) return;
       CONTAINER.style.setProperty("--gap", CONFIG.gap);
       CONTAINER.style.setProperty("--blur", CONFIG.blur);
       CONTAINER.style.setProperty("--spread", CONFIG.spread);
@@ -67,14 +74,14 @@ const GlowCard = ({ children, identifier }) => {
     };
 
     RESTYLE();
-    UPDATE({ x: 0, y: 0 }); 
-
-    document.body.addEventListener("pointermove", UPDATE);
+    UPDATE({ x: 0, y: 0 }); // Initialize
 
     return () => {
       document.body.removeEventListener("pointermove", UPDATE);
     };
-  }, [identifier]);
+  }, [isClient, identifier]); // Add isClient to dependencies
+
+  if (!isClient) return null; // Prevent rendering on SSR
 
   return (
     <div className={`glow-container-${identifier} glow-container`}>
