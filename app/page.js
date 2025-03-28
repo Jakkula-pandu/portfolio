@@ -50,7 +50,7 @@ export default async function Home() {
       <Experience />
       <Skills />
       <Projects />
-      {/* <Education /> */}
+      <Education />
       <Service blogs={services} />     
       <ContactSection />
     </div>
