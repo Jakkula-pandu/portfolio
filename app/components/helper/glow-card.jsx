@@ -1,21 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const GlowCard = ({ children, identifier }) => {
-  const [isClient, setIsClient] = useState(false);
+  const containerRef = useRef(null);
+  const cardsRef = useRef([]);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient || typeof window === "undefined") return; // Ensures execution only on client
-
-    const CONTAINER = document.querySelector(`.glow-container-${identifier}`);
-    const CARDS = document.querySelectorAll(`.glow-card-${identifier}`);
-
-    if (!CONTAINER || CARDS.length === 0) return;
+    if (!identifier) return;
 
     const CONFIG = {
       proximity: 40,
@@ -27,9 +19,9 @@ const GlowCard = ({ children, identifier }) => {
     };
 
     const UPDATE = (event) => {
-      if (!event?.x || !event?.y) return; // Prevents undefined event error
+      if (!event || event.x === undefined || event.y === undefined) return;
 
-      CARDS.forEach((CARD) => {
+      cardsRef.current.forEach((CARD) => {
         if (!CARD) return;
 
         const CARD_BOUNDS = CARD.getBoundingClientRect();
@@ -61,31 +53,44 @@ const GlowCard = ({ children, identifier }) => {
       });
     };
 
-    document.body.addEventListener("pointermove", UPDATE);
-
     const RESTYLE = () => {
-      CONTAINER.style.setProperty("--gap", CONFIG.gap);
-      CONTAINER.style.setProperty("--blur", CONFIG.blur);
-      CONTAINER.style.setProperty("--spread", CONFIG.spread);
-      CONTAINER.style.setProperty(
+      if (!containerRef.current) return;
+      containerRef.current.style.setProperty("--gap", CONFIG.gap);
+      containerRef.current.style.setProperty("--blur", CONFIG.blur);
+      containerRef.current.style.setProperty("--spread", CONFIG.spread);
+      containerRef.current.style.setProperty(
         "--direction",
         CONFIG.vertical ? "column" : "row"
       );
     };
 
     RESTYLE();
-    UPDATE({ x: 0, y: 0 }); // Initialize
+    UPDATE({ x: 0, y: 0 });
+
+    const handlePointerMove = (e) => {
+      UPDATE({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
 
     return () => {
-      document.body.removeEventListener("pointermove", UPDATE);
+      window.removeEventListener("pointermove", handlePointerMove);
     };
-  }, [isClient, identifier]); // Add isClient to dependencies
+  }, [identifier]);
 
-  if (!isClient) return null; // Prevent rendering on SSR
+  const addCardRef = (el) => {
+    if (el && !cardsRef.current.includes(el)) {
+      cardsRef.current.push(el);
+    }
+  };
 
   return (
-    <div className={`glow-container-${identifier} glow-container`}>
+    <div 
+      ref={containerRef} 
+      className={`glow-container-${identifier} glow-container`}
+    >
       <article
+        ref={addCardRef}
         className={`glow-card glow-card-${identifier} h-fit cursor-pointer border border-[#2a2e5a] transition-all duration-300 relative bg-[#101123] text-gray-200 rounded-xl hover:border-transparent w-full`}
       >
         <div className="glows"></div>
